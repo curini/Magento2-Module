@@ -1,0 +1,20 @@
+{
+    "name": "custom-form/module-email",
+    "description": "N/A",
+    "type": "magento2-module",
+    "config": {
+        "sort-packages": true
+    },
+    "version": "1.0.0",
+    "require": {
+        "php": "~8.2.0||~8.3.0||~8.4.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "CustomForm\\Email\\": ""
+        }
+    }
+}
