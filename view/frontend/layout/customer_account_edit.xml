@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright 2013 Adobe
+ * All Rights Reserved.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="CustomForm_Email::css/jquery-autocomplete.css"/>
+    </head>
+    <body>
+        <referenceContainer name="form.additional.info">
+            <block class="Magento\Framework\View\Element\Js\Components" name="customer_account_customform_email_components" template="CustomForm_Email::js/components.phtml">
+                <arguments>
+                    <argument name="ajax_url" xsi:type="string">
+                        emailform/ajax/autocomplete
+                    </argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
