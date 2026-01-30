@@ -21,6 +21,15 @@ define([
       });
     },
 
+    verify: function () {
+      const value = this.element.val();
+      const validator = this.element.closest("form").validate();
+
+      if (validator) {
+        validator.element(this.element);
+      }
+    },
+
     disableNavigatorAutofill: function () {
       this.element.attr("autocomplete", "new-password");
     },
@@ -29,6 +38,8 @@ define([
       const self = this;
 
       self.disableNavigatorAutofill();
+
+      self.verify();
 
       self.element.autocomplete({
         source: function (request, response) {
@@ -53,6 +64,10 @@ define([
           }
         },
         appendTo: self.element.parent(),
+        select: function (ui, item) {
+          self.element.val(item.item.value);
+          self.verify();
+        },
       });
     },
   });
