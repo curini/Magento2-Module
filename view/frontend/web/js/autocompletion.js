@@ -3,7 +3,7 @@ define([
   "Magento_Ui/js/lib/validation/validator",
   "jquery-ui-modules/autocomplete",
   "jquery-ui-modules/widget",
-], function ($, validation) {
+], function ($) {
   "use strict";
 
   $.widget("mage.emailAutocomplete", {
@@ -22,7 +22,6 @@ define([
     },
 
     verify: function () {
-      const value = this.element.val();
       const validator = this.element.closest("form").validate();
 
       if (validator) {
