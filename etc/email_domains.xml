@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/config.xsd">
+    <names>
+        <name>gmail.com</name>
+        <name>free.fr</name>
+        <name>hotmail.fr</name>
+        <name>yahoo.fr</name>
+        <name>laposte.net</name>
+        <name>outlook.com</name>
+        <name>orange.fr</name>
+    </names>
+</config>
