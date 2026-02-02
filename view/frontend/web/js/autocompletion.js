@@ -18,6 +18,7 @@ define([
       $.getJSON(this.options.ajax_url).then(function (data) {
         self.options.source = data;
         self.element.on("keyup", self.autocompletion.bind(self));
+        self.element.on("blur", self.verify.bind(self));
       });
     },
 
@@ -37,8 +38,6 @@ define([
       const self = this;
 
       self.disableNavigatorAutofill();
-
-      self.verify();
 
       self.element.autocomplete({
         source: function (request, response) {
