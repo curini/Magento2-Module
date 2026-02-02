@@ -10,6 +10,7 @@ define([
     options: {
       ajax_url: "",
       source: [],
+      limit_proposals: 5,
     },
 
     _create: function () {
@@ -34,6 +35,16 @@ define([
       this.element.attr("autocomplete", "new-password");
     },
 
+    proposalOfSecondPartOfEmail: function (request) {
+      const self = this;
+      const term = request.term.split("@")[0];
+      const domainPart = request.term.split("@")[1].toLowerCase();
+
+      return $.map(self.options.source, function (item) {
+        return item.startsWith(domainPart) ? term + "@" + item : null;
+      }).slice(0, self.options.limit_proposals);
+    },
+
     autocompletion: function () {
       const self = this;
 
@@ -50,15 +61,7 @@ define([
               response([]);
               return;
             }
-
-            let term = request.term.split("@")[0];
-            let domainPart = request.term.split("@")[1].toLowerCase();
-
-            let results = $.map(self.options.source, function (item) {
-              return item.startsWith(domainPart) ? term + "@" + item : null;
-            });
-
-            response(results);
+            response(self.proposalOfSecondPartOfEmail(request));
           }
         },
         classes: {
