@@ -61,6 +61,9 @@ define([
             response(results);
           }
         },
+        classes: {
+          "ui-autocomplete": "custom-email-autocomplete",
+        },
         appendTo: self.element.parent(),
         select: function (ui, item) {
           self.element.val(item.item.value);

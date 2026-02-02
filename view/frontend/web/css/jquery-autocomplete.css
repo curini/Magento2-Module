@@ -1,4 +1,4 @@
-.ui-autocomplete {
+.custom-email-autocomplete {
   border: 1px solid #ccc;
   background-color: #fff;
   z-index: 1000;
@@ -7,12 +7,13 @@
   width: auto !important;
 }
 
-.ui-menu-item {
+.custom-email-autocomplete .ui-menu-item-wrapper {
   font-size: 14px;
-  padding: 5px 10px;
+  padding: 8px 12px;
   cursor: pointer;
 }
 
-.ui-menu-item:hover {
+.custom-email-autocomplete .ui-menu-item:hover,
+.custom-email-autocomplete .ui-menu-item:has(.ui-state-active) {
   background-color: #f0f0f0;
 }
