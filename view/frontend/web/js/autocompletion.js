@@ -11,6 +11,8 @@ define([
       ajax_url: "",
       source: [],
       limit_proposals: 5,
+      firstNameId: "#firstname",
+      lastNameId: "#lastname",
     },
 
     _create: function () {
@@ -35,6 +37,33 @@ define([
       this.element.attr("autocomplete", "new-password");
     },
 
+    generateProposal: function (firstPart, secondPart, separator) {
+      return firstPart + separator + secondPart;
+    },
+
+    proposalOfFirstPartOfEmail: function (request) {
+      const firstNameElement = $(this.options.firstNameId);
+      const lastNameElement = $(this.options.lastNameId);
+
+      if (firstNameElement.length && lastNameElement.length) {
+        const firstName = firstNameElement.val().toLowerCase();
+        const lastName = lastNameElement.val().toLowerCase();
+
+        const proposals = [
+          this.generateProposal(firstName, lastName, "."),
+          this.generateProposal(firstName, lastName, "-"),
+          this.generateProposal(firstName[0], lastName, "."),
+          this.generateProposal(firstName, lastName, ""),
+          this.generateProposal(firstName[0], lastName, ""),
+        ];
+
+        return $.map(proposals, function (item) {
+          return item.startsWith(request.term) ? item : null;
+        }).slice(0, this.options.limit_proposals);
+      }
+      return [];
+    },
+
     proposalOfSecondPartOfEmail: function (request) {
       const self = this;
       const term = request.term.split("@")[0];
@@ -52,8 +81,8 @@ define([
 
       self.element.autocomplete({
         source: function (request, response) {
-          if (request.term.indexOf("@") === -1) {
-            response([]);
+          if (request.term == "" || request.term.indexOf("@") === -1) {
+            response(self.proposalOfFirstPartOfEmail(request));
           } else {
             let requestSplited = request.term.split("@");
 
