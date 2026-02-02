@@ -3,13 +3,16 @@ define([
   "Magento_Ui/js/lib/validation/validator",
   "jquery-ui-modules/autocomplete",
   "jquery-ui-modules/widget",
-], function ($, validation) {
+], function ($) {
   "use strict";
 
   $.widget("mage.emailAutocomplete", {
     options: {
       ajax_url: "",
       source: [],
+      limit_proposals: 5,
+      firstNameId: "#firstname",
+      lastNameId: "#lastname",
     },
 
     _create: function () {
@@ -18,11 +21,57 @@ define([
       $.getJSON(this.options.ajax_url).then(function (data) {
         self.options.source = data;
         self.element.on("keyup", self.autocompletion.bind(self));
+        self.element.on("blur", self.verify.bind(self));
       });
+    },
+
+    verify: function () {
+      const validator = this.element.closest("form").validate();
+
+      if (validator) {
+        validator.element(this.element);
+      }
     },
 
     disableNavigatorAutofill: function () {
       this.element.attr("autocomplete", "new-password");
+    },
+
+    generateProposal: function (firstPart, secondPart, separator) {
+      return firstPart + separator + secondPart;
+    },
+
+    proposalOfFirstPartOfEmail: function (request) {
+      const firstNameElement = $(this.options.firstNameId);
+      const lastNameElement = $(this.options.lastNameId);
+
+      if (firstNameElement.length && lastNameElement.length) {
+        const firstName = firstNameElement.val().toLowerCase();
+        const lastName = lastNameElement.val().toLowerCase();
+
+        const proposals = [
+          this.generateProposal(firstName, lastName, "."),
+          this.generateProposal(firstName, lastName, "-"),
+          this.generateProposal(firstName[0], lastName, "."),
+          this.generateProposal(firstName, lastName, ""),
+          this.generateProposal(firstName[0], lastName, ""),
+        ];
+
+        return $.map(proposals, function (item) {
+          return item.startsWith(request.term) ? item : null;
+        }).slice(0, this.options.limit_proposals);
+      }
+      return [];
+    },
+
+    proposalOfSecondPartOfEmail: function (request) {
+      const self = this;
+      const term = request.term.split("@")[0];
+      const domainPart = request.term.split("@")[1].toLowerCase();
+
+      return $.map(self.options.source, function (item) {
+        return item.startsWith(domainPart) ? term + "@" + item : null;
+      }).slice(0, self.options.limit_proposals);
     },
 
     autocompletion: function () {
@@ -32,8 +81,8 @@ define([
 
       self.element.autocomplete({
         source: function (request, response) {
-          if (request.term.indexOf("@") === -1) {
-            response([]);
+          if (request.term == "" || request.term.indexOf("@") === -1) {
+            response(self.proposalOfFirstPartOfEmail(request));
           } else {
             let requestSplited = request.term.split("@");
 
@@ -41,18 +90,17 @@ define([
               response([]);
               return;
             }
-
-            let term = request.term.split("@")[0];
-            let domainPart = request.term.split("@")[1].toLowerCase();
-
-            let results = $.map(self.options.source, function (item) {
-              return item.startsWith(domainPart) ? term + "@" + item : null;
-            });
-
-            response(results);
+            response(self.proposalOfSecondPartOfEmail(request));
           }
         },
+        classes: {
+          "ui-autocomplete": "custom-email-autocomplete",
+        },
         appendTo: self.element.parent(),
+        select: function (ui, item) {
+          self.element.val(item.item.value);
+          self.verify();
+        },
       });
     },
   });
